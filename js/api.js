@@ -14,8 +14,18 @@ App.Api = (function () {
 
   const BASE_URL = "https://stock-flow-2e23e-default-rtdb.firebaseio.com/menu.json";
 
+  const FALLBACK_MENU = {
+    "1": { name: "Cupcake de vainilla",    price: 3500, image: "images/menu/cupcake_vainilla.jpg" },
+    "2": { name: "Brownie de chocolate",   price: 4000, image: "images/menu/brownie_chocolate.jpg" },
+    "3": { name: "Galleta de mantequilla", price: 2500, image: "images/menu/galleta_mantequilla.jpg" },
+    "4": { name: "Muffin de arándanos",    price: 3800, image: "images/menu/muffin_arandanos.jpg" },
+    "5": { name: "Pastel de fresa",        price: 5000, image: "images/menu/pastel_fresa.jpg" },
+    "6": { name: "Donut glaseado",         price: 3200, image: "images/menu/donut_glaseado.jpg" },
+  };
+
   /**
    * Obtiene el menú desde Firebase Realtime Database.
+   * Si Firebase no responde, devuelve el menú de ejemplo local.
    * @returns {Promise<Object>} objeto { id: {name, price} }
    */
   function getMenu() {
@@ -25,7 +35,14 @@ App.Api = (function () {
         return res.json();
       })
       .then(function (data) {
-        return normalizeMenu(data);
+        var menu = normalizeMenu(data);
+        // Si Firebase devolvió vacío, usar fallback
+        if (Object.keys(menu).length === 0) return FALLBACK_MENU;
+        return menu;
+      })
+      .catch(function (err) {
+        console.warn("Firebase no disponible, usando menú de ejemplo:", err.message);
+        return FALLBACK_MENU;
       });
   }
 

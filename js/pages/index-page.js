@@ -23,45 +23,26 @@ function loadAndRender() {
     });
 }
 
-function getEmojiForName(name) {
+function getImageForName(name) {
   const n = name.toLowerCase();
-  if (n.includes("cupcake") || n.includes("muffin")) return "🧁";
-  if (n.includes("pastel") || n.includes("torta") || n.includes("cake")) return "🍰";
-  if (n.includes("dona") || n.includes("donut")) return "🍩";
-  if (n.includes("galleta") || n.includes("cookie")) return "🍪";
-  if (n.includes("croissant") || n.includes("cuernito") || n.includes("panito")) return "🥐";
-  if (n.includes("chocolate") || n.includes("brownie") || n.includes("choco")) return "🍫";
-  if (n.includes("flan") || n.includes("gelatina") || n.includes("pudin")) return "🍮";
-  if (n.includes("pie") || n.includes("pay") || n.includes("tarta")) return "🥧";
-  if (n.includes("pan") || n.includes("baguette")) return "🍞";
-  if (n.includes("cafe") || n.includes("coffee") || n.includes("tinto")) return "☕";
-  if (n.includes("leche") || n.includes("milk")) return "🥛";
-  if (n.includes("jugo") || n.includes("juice")) return "🧃";
-  if (n.includes("fresa") || n.includes("strawberry")) return "🍓";
-  if (n.includes("limon") || n.includes("lemon")) return "🍋";
-  if (n.includes("manzana") || n.includes("apple")) return "🍎";
-  if (n.includes("helado") || n.includes("ice cream")) return "🍦";
-  if (n.includes("donu")) return "🍩";
-  if (n.includes("brownie")) return "🍫";
-  if (n.includes("muffin")) return "🧁";
-  if (n.includes("macaron")) return "🍪";
-  if (n.includes("cheesecake")) return "🍰";
-  if (n.includes("alfajor")) return "🍪";
-  if (n.includes("suspiro") || n.includes("merengue")) return "☁️";
-  if (n.includes("canela") || n.includes("roll")) return "🌀";
-  if (n.includes("tinto")) return "☕";
-  
-  // Comida colombiana (ejemplo)
-  if (n.includes("bandeja paisa")) return "🍱";
-  if (n.includes("arepa")) return "🫓";
-  if (n.includes("empanada")) return "🥟";
-  if (n.includes("ajiaco") || n.includes("sopa")) return "🥣";
-
-  // Default emojis if no match
-  const fallbacks = ["🧁", "🍰", "🍩", "🍪"];
-  const index = name.length % fallbacks.length;
-  return fallbacks[index];
+  // Repostería
+  if (n.includes("cupcake"))                          return "images/menu/cupcake_vainilla.jpg";
+  if (n.includes("brownie"))                          return "images/menu/brownie_chocolate.jpg";
+  if (n.includes("galleta") || n.includes("cookie"))  return "images/menu/galleta_mantequilla.jpg";
+  if (n.includes("muffin"))                           return "images/menu/muffin_arandanos.jpg";
+  if (n.includes("pastel") || n.includes("torta") || n.includes("cake")) return "images/menu/pastel_fresa.jpg";
+  if (n.includes("donut") || n.includes("dona") || n.includes("donu"))   return "images/menu/donut_glaseado.jpg";
+  if (n.includes("croissant") || n.includes("cuernito"))                 return "images/menu/croissant.jpg";
+  // Comida
+  if (n.includes("bandeja"))                          return "images/menu/bandeja_paisa.jpg";
+  if (n.includes("papa") || n.includes("frita"))      return "images/menu/papas_fritas.jpg";
+  if (n.includes("pasta") || n.includes("espagueti") || n.includes("fideos")) return "images/menu/pastas.jpg";
+  if (n.includes("hambur") || n.includes("burger"))   return "images/menu/hamburguesa.jpg";
+  return null; // sin imagen → usará emoji
 }
+
+
+
 
 function renderMenu() {
   const grid = document.getElementById("menuGrid");
@@ -88,11 +69,14 @@ function renderMenu() {
     const item = menuData[id];
     const card = document.createElement("div");
     card.className = "menu-item";
-    
-    const emoji = getEmojiForName(item.name);
-    
+
+    const imgSrc = item.image || getImageForName(item.name);
+    const mediaHtml = imgSrc
+      ? '<img class="menu-img" src="' + imgSrc + '" alt="' + escapeHtml(item.name) + '" loading="lazy">'
+      : '<span class="emoji">🧁</span>';
+
     card.innerHTML =
-      '<span class="emoji">' + emoji + "</span>" +
+      mediaHtml +
       '<div class="name">' + escapeHtml(item.name) + "</div>" +
       '<div class="price">$' + item.price.toFixed(2) + "</div>";
     grid.appendChild(card);

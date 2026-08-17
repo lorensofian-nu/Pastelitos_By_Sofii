@@ -38,8 +38,7 @@ html, body {
 body {
   font-family: 'Quicksand', sans-serif;
   color: var(--ink);
-  background: linear-gradient(160deg, var(--butter-soft) 0%, var(--butter) 22%, var(--lilac) 78%, var(--lilac-deep) 100%);
-  background-attachment: fixed;
+  background: var(--lilac);
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -134,6 +133,19 @@ main {
   color: var(--ink);
 }
 
+/* Capa blanca blur que envuelve el contenido del hero */
+.hero-inner {
+  display: inline-block;
+  width: 100%;
+  max-width: 580px;
+  background: rgba(255, 255, 255, 0.50);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: var(--radius-lg);
+  padding: 36px 40px 28px;
+  margin: 0 auto;
+}
+
 .hero h1 {
   font-size: clamp(2rem, 5vw, 3rem);
   margin: 0 0 8px;
@@ -154,12 +166,14 @@ main {
 
 /* ---------- Tarjetas ---------- */
 .card {
-  background: var(--cream);
+  background: rgba(255, 255, 255, 0.50);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-soft);
   padding: 28px 26px;
   margin-bottom: 24px;
-  border: 3px solid var(--white);
+  border: 3px solid rgba(255, 255, 255, 0.75);
 }
 
 .card h2, .card h3 {
@@ -186,6 +200,23 @@ main {
   font-size: 1.8rem;
   display: block;
   margin-bottom: 6px;
+}
+
+.menu-img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  object-position: center;
+  border-radius: var(--radius-md);
+  display: block;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 12px rgba(106, 63, 160, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.menu-item:hover .menu-img {
+  transform: scale(1.04);
+  box-shadow: 0 8px 20px rgba(106, 63, 160, 0.25);
 }
 
 .menu-item .name {
