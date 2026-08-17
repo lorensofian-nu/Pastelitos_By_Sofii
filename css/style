@@ -1,0 +1,290 @@
+/* =========================================================
+   Pastelitos By Sofii — styles.css
+   Hoja de estilos ÚNICA compartida por todas las vistas (MPA)
+   Ejercicio 1: un solo styles.css enlazado desde cada HTML
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Quicksand:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Paleta: amarillo mantequilla + lila, bien vibrante */
+  --butter: #FFD93B;
+  --butter-soft: #FFF3C4;
+  --lilac: #B181E0;
+  --lilac-deep: #6A3FA0;
+  --frosting-pink: #FF8FB1;
+  --cream: #FFFBF0;
+  --ink: #3A2E4D;
+  --ink-soft: #6B5C82;
+  --white: #FFFFFF;
+  --success: #2FAE66;
+  --danger: #D64550;
+
+  --radius-lg: 28px;
+  --radius-md: 18px;
+  --radius-pill: 999px;
+  --shadow-soft: 0 10px 30px rgba(106, 63, 160, 0.18);
+  --shadow-pop: 0 6px 0 rgba(106, 63, 160, 0.35);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: 'Quicksand', sans-serif;
+  color: var(--ink);
+  background: linear-gradient(160deg, var(--butter-soft) 0%, var(--butter) 22%, var(--lilac) 78%, var(--lilac-deep) 100%);
+  background-attachment: fixed;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+h1, h2, h3, .brand {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+a { color: var(--lilac-deep); }
+
+/* ---------- Encabezado / navegación ---------- */
+header.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 6vw;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(6px);
+  border-bottom: 3px solid var(--lilac-deep);
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.5rem;
+  text-decoration: none;
+}
+
+.brand .brand-icon {
+  font-size: 1.7rem;
+  filter: drop-shadow(0 2px 0 rgba(0,0,0,0.08));
+}
+
+nav.mainnav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+nav.mainnav a, nav.mainnav span.navlabel {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 500;
+  text-decoration: none;
+  color: var(--ink);
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  transition: transform .15s ease, background .15s ease;
+  background: rgba(255,255,255,0.6);
+}
+
+nav.mainnav a:hover {
+  background: var(--white);
+  transform: translateY(-2px);
+}
+
+nav.mainnav a.active {
+  background: var(--lilac-deep);
+  color: var(--white);
+}
+
+/* ---------- Divisor tipo "cortina de repostería" (elemento distintivo) ---------- */
+.scallop-divider {
+  width: 100%;
+  height: 26px;
+  background-image: radial-gradient(circle at 10px -6px, transparent 12px, var(--cream) 13px);
+  background-size: 26px 26px;
+  background-repeat: repeat-x;
+}
+
+/* ---------- Contenedor general ---------- */
+main {
+  flex: 1;
+  width: 100%;
+}
+
+.page-wrap {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 40px 20px 60px;
+}
+
+/* ---------- Hero (solo inicio) ---------- */
+.hero {
+  text-align: center;
+  padding: 56px 6vw 40px;
+  color: var(--ink);
+}
+
+.hero h1 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  margin: 0 0 8px;
+}
+
+.hero p.tagline {
+  font-size: 1.15rem;
+  color: var(--ink-soft);
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.hero .cupcake-row {
+  font-size: 2rem;
+  margin-top: 18px;
+  letter-spacing: 14px;
+}
+
+/* ---------- Tarjetas ---------- */
+.card {
+  background: var(--cream);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  padding: 28px 26px;
+  margin-bottom: 24px;
+  border: 3px solid var(--white);
+}
+
+.card h2, .card h3 {
+  margin-top: 0;
+}
+
+/* ---------- Grid de menú ---------- */
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+}
+
+.menu-item {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  text-align: center;
+  box-shadow: 0 4px 0 rgba(106,63,160,0.12);
+  border: 2px solid var(--butter-soft);
+}
+
+.menu-item .emoji {
+  font-size: 1.8rem;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.menu-item .name {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+}
+
+.menu-item .price {
+  color: var(--lilac-deep);
+  font-weight: 700;
+}
+
+.empty-state, .loading-state {
+  text-align: center;
+  color: var(--ink-soft);
+  padding: 20px;
+  font-style: italic;
+}
+
+/* ---------- Formularios ---------- */
+.field {
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+label {
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--ink);
+}
+
+input[type="text"],
+input[type="password"],
+input[type="number"],
+select {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 1rem;
+  padding: 11px 14px;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--lilac);
+  background: var(--white);
+  color: var(--ink);
+}
+
+input:focus, select:focus {
+  outline: 3px solid var(--frosting-pink);
+  outline-offset: 1px;
+}
+
+.btn {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 13px 26px;
+  border: none;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  color: var(--ink);
+  background: var(--butter);
+  box-shadow: var(--shadow-pop);
+  transition: transform .1s ease, box-shadow .1s ease;
+}
+
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(106,63,160,0.35); }
+
+.btn-primary { background: var(--lilac); color: var(--white); }
+.btn-accent { background: var(--frosting-pink); color: var(--white); }
+.btn-secondary { background: var(--white); border: 2px solid var(--lilac); }
+.btn[disabled] { opacity: .55; cursor: not-allowed; transform:none; }
+
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* ---------- Mensajes / feedback ---------- */
+.msg { margin-top: 12px; padding: 10px 14px; border-radius: var(--radius-md); font-weight: 600; }
+.msg-error { background: #FBDADA; color: var(--danger); }
+.msg-success { background: #D9F2E3; color: var(--success); }
+.msg-info { background: var(--butter-soft); color: var(--ink); }
+
+/* ---------- Resultado de pedido ---------- */
+.order-summary { background: var(--butter-soft); border-radius: var(--radius-md); padding: 18px; margin-top: 18px; }
+.order-summary .line { display: flex; justify-content: space-between; padding: 3px 0; }
+.order-summary .total { font-weight: 700; font-size: 1.15rem; color: var(--lilac-deep); border-top: 2px dashed var(--lilac); margin-top: 6px; padding-top: 8px; }
+
+/* ---------- Pie de página ---------- */
+footer {
+  text-align: center;
+  padding: 22px;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+
+/* ---------- Utilidades ---------- */
+.hidden { display: none !important; }
+.text-center { text-align: center; }
+
+@media (max-width: 480px) {
+  header.topbar { padding: 14px 4vw; }
+  .page-wrap { padding: 28px 14px 44px; }
+}
