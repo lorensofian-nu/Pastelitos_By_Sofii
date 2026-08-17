@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tomar pedido · Pastelitos By Sofii</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <header class="topbar">
+    <a href="index.html" class="brand"><span class="brand-icon">🧁</span> Pastelitos By Sofii</a>
+    <nav class="mainnav">
+      <a href="index.html" data-page="inicio">Inicio</a>
+      <a href="pedido.html" data-page="pedido">Tomar pedido</a>
+      <a href="admin.html" data-page="admin" id="navAdmin" class="hidden">Admin</a>
+      <a href="login.html" data-page="login" id="navLogin">Ingresar</a>
+      <a href="#" id="navLogout" class="hidden">Cerrar sesión</a>
+    </nav>
+  </header>
+  <div class="scallop-divider"></div>
+
+  <main class="page-wrap">
+    <div class="card">
+      <h2>Tomar pedido</h2>
+      <p>Selecciona un pastelito, indica la cantidad y calcula el total (IVA 19% incluido).</p>
+
+      <div class="field">
+        <label for="itemSelect">Pastelito</label>
+        <select id="itemSelect">
+          <option value="">--Cargando menú--</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="cantidad">Cantidad</label>
+        <input type="number" id="cantidad" min="1" step="1" placeholder="Ej: 2">
+      </div>
+
+      <div class="field">
+        <label for="precioUnitario">Precio unitario ($)</label>
+        <input type="number" id="precioUnitario" min="0" step="0.01" placeholder="Se autocompleta al elegir">
+      </div>
+
+      <div class="btn-row">
+        <button id="btnProcesar" class="btn btn-primary" type="button">Calcular pedido</button>
+      </div>
+
+      <div id="resultado"></div>
+    </div>
+  </main>
+
+  <footer>Pastelitos By Sofii · Taller de refactorización (MPA)</footer>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/menu.js"></script>
+  <script src="js/pedidos.js"></script>
+  <script src="js/nav.js"></script>
+  <script src="js/pages/pedido-page.js"></script>
+</body>
+</html>

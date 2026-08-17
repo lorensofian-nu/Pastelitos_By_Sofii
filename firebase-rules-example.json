@@ -1,0 +1,13 @@
+{
+  "//": "Ejercicio 3 — Reglas de seguridad para Firebase Realtime Database.",
+  "//1": "Esto NO se aplica desde el código del cliente: se pega en",
+  "//2": "Firebase Console > Realtime Database > Reglas, para el proyecto stock-flow-2e23e.",
+  "//3": "Con esto, cualquiera puede LEER el menú (necesario para index.html/pedido.html),",
+  "//4": "pero solo un usuario autenticado con Firebase Auth puede ESCRIBIR (crear productos).",
+  "rules": {
+    "menu": {
+      ".read": true,
+      ".write": "auth != null"
+    }
+  }
+}
