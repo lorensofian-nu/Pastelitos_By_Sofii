@@ -272,7 +272,39 @@ input:focus, select:focus {
 .order-summary .line { display: flex; justify-content: space-between; padding: 3px 0; }
 .order-summary .total { font-weight: 700; font-size: 1.15rem; color: var(--lilac-deep); border-top: 2px dashed var(--lilac); margin-top: 6px; padding-top: 8px; }
 
-/* ---------- Pie de página ---------- */
+/* ---------- Paginación ---------- */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.pagination .page-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 2px solid var(--lilac);
+  background: var(--white);
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pagination .page-btn:hover {
+  background: var(--butter-soft);
+}
+
+.pagination .page-btn.active {
+  background: var(--lilac-deep);
+  color: var(--white);
+  border-color: var(--lilac-deep);
+}
+
 footer {
   text-align: center;
   padding: 22px;
