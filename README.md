@@ -1,47 +1,55 @@
 # Pastelitos By Sofii
 
-MPA (Multiple Page Application) de pedidos para una repostería, conectada a
-Firebase Realtime Database. Refactor del proyecto legacy siguiendo los 5
-ejercicios del taller (ver `CHANGELOG.md` para el detalle de qué cambió y por qué).
+Aplicación web de pedidos para repostería. MPA estática conectada a Firebase Realtime Database, refactorizada desde un proyecto legacy siguiendo un taller de 5 ejercicios.
 
-## Cómo abrirlo
-Es un proyecto estático: abre `index.html` con doble clic (o sirviéndolo con
-un servidor local, ej. `npx serve .`).
+## Stack
 
-## Estructura
+- **Frontend:** HTML5, CSS3, JavaScript (ES6+)
+- **Backend:** Firebase Realtime Database
+- **Servidor local:** Node.js (`server.js`)
+
+## Inicio rápido
+
+**Prerrequisitos:** [Node.js](https://nodejs.org/) v14+
+
+```bash
+# Opción 1 — Servidor local
+node server.js
+# Abrir http://localhost:3009
+
+# Opción 2 — Abrir directamente
+# Doble clic en index.html (funciona sin servidor)
+```
+
+## Estructura del proyecto
 
 ```
-index.html          → Vitrina del menú (público)
-pedido.html          → Tomar pedido (público)
-login.html            → Acceso al panel (público)
-admin.html            → Crear productos (protegida, requiere sesión)
-css/
-  styles.css            → Única hoja de estilos de toda la app
-js/
-  api.js                → App.Api    — acceso a Firebase Realtime Database
-  auth.js               → App.Auth   — sesión / login / logout
-  menu.js               → App.Menu   — estado y caché del menú
-  pedidos.js             → App.Pedidos — cálculo y validación de pedidos (lógica pura)
-  nav.js                 → App.Nav   — estado visual de la navegación
-  pages/
-    index-page.js         → glue code de index.html
-    pedido-page.js         → glue code de pedido.html
-    login-page.js           → glue code de login.html
-    admin-page.js            → glue code de admin.html
-firebase-rules-example.json → reglas de seguridad sugeridas para Realtime Database
-CHANGELOG.md            → detalle de la refactorización, ejercicio por ejercicio
+├── index.html              → Vitrina del menú
+├── pedido.html             → Formulario de pedido
+├── login.html              → Acceso al panel admin
+├── admin.html              → Crear productos (requiere sesión)
+├── server.js               → Servidor de desarrollo local
+├── css/
+│   └── styles.css          → Estilos globales
+├── js/
+│   ├── api.js              → Acceso a Firebase RTDB
+│   ├── auth.js             → Sesión / login / logout
+│   ├── menu.js             → Estado y caché del menú
+│   ├── pedidos.js          → Lógica de cálculo de pedidos
+│   ├── nav.js              → Navegación visual
+│   └── pages/              → Glue code por página
+├── images/menu/            → Imágenes del menú
+└── firebase-rules-example.json → Reglas de seguridad sugeridas
 ```
 
 ## Firebase
-Lee y escribe sobre:
-`https://stock-flow-2e23e-default-rtdb.firebaseio.com/menu.json`
 
-La escritura (`admin.html`) no está protegida a nivel de servidor todavía.
-Ver `js/auth.js` y `firebase-rules-example.json` para la nota de seguridad y
-el siguiente paso recomendado (Firebase Authentication + reglas de RTDB).
+Lee y escribe en `stock-flow-2e23e-default-rtdb.firebaseio.com/menu.json`.
 
-## Demo de acceso
-Usuario: `admin` — Contraseña: `admin` (solo para fines del taller, ver nota de seguridad).
+La escritura desde `admin.html` no está protegida a nivel de servidor. Ver `firebase-rules-example.json` para reglas sugeridas y `js/auth.js` para la nota de migración a Firebase Authentication.
+
+**Credenciales de prueba:** usuario `admin`, contraseña `admin` (solo para fines del taller).
 
 ## Créditos
-Proyecto base (legacy) del taller de refactorización, transformado a MPA modular.
+
+Proyecto base del taller de refactorización, transformado de un `index.html` monolítico a MPA modular.
