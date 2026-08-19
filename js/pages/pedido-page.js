@@ -1,9 +1,8 @@
 /* =========================================================
-   js/pages/pedido-page.js
-   Ejercicio 2 y 5: reemplaza a la función monolítica tomarTodo()
-   del legacy. Aquí solo se hace manipulación del DOM; el cálculo
-   y la validación viven en App.Pedidos (lógica de negocio pura).
-   Nombres de variables descriptivos en vez de a/b/p.
+   js/pages/pedido-page.js — Tomar pedido (sin login)
+   El usuario puede calcular y confirmar un pedido sin iniciar
+   sesión. El pedido se guarda en Firebase para que el admin
+   pueda verlo en el dashboard.
    ========================================================= */
 window.addEventListener("DOMContentLoaded", function () {
   App.Nav.init("pedido");
@@ -11,17 +10,22 @@ window.addEventListener("DOMContentLoaded", function () {
 
   document.getElementById("itemSelect").addEventListener("change", autocompletarPrecio);
   document.getElementById("btnProcesar").addEventListener("click", procesarPedido);
+  document.getElementById("btnConfirmar").addEventListener("click", confirmarPedido);
 });
 
+var ultimoCalculo = null;
+var ultimoItemId = null;
+var ultimoItemNombre = "";
+
 function cargarSelectDeMenu() {
-  const select = document.getElementById("itemSelect");
+  var select = document.getElementById("itemSelect");
   select.innerHTML = '<option value="">--Cargando menú--</option>';
 
   App.Menu.load()
     .then(function (menu) {
       select.innerHTML = '<option value="">--Selecciona un pastelito--</option>';
       Object.keys(menu).forEach(function (id) {
-        const opt = document.createElement("option");
+        var opt = document.createElement("option");
         opt.value = id;
         opt.text = menu[id].name + " ($" + menu[id].price.toFixed(2) + ")";
         select.appendChild(opt);
@@ -33,38 +37,91 @@ function cargarSelectDeMenu() {
 }
 
 function autocompletarPrecio() {
-  const itemId = document.getElementById("itemSelect").value;
-  const precio = App.Menu.getPrice(itemId);
+  var itemId = document.getElementById("itemSelect").value;
+  var precio = App.Menu.getPrice(itemId);
   if (precio !== undefined) {
     document.getElementById("precioUnitario").value = precio;
   }
+  // Reset estado al cambiar de producto
+  document.getElementById("btnConfirmar").classList.add("hidden");
+  document.getElementById("resultado").innerHTML = "";
+  ultimoCalculo = null;
 }
 
 function procesarPedido() {
-  const itemId = document.getElementById("itemSelect").value;
-  const itemNombre = App.Menu.getName(itemId) || "";
-  const cantidad = Number(document.getElementById("cantidad").value);
-  const precioUnitario = Number(document.getElementById("precioUnitario").value);
+  var itemId = document.getElementById("itemSelect").value;
+  var itemNombre = App.Menu.getName(itemId) || "";
+  var cantidad = Number(document.getElementById("cantidad").value);
+  var precioUnitario = Number(document.getElementById("precioUnitario").value);
 
-  const resultadoDiv = document.getElementById("resultado");
-  const validacion = App.Pedidos.validar(itemId, cantidad, precioUnitario);
+  var resultadoDiv = document.getElementById("resultado");
+  var validacion = App.Pedidos.validar(itemId, cantidad, precioUnitario);
 
   if (!validacion.valid) {
     resultadoDiv.innerHTML = '<div class="msg msg-error">' + validacion.message + "</div>";
+    document.getElementById("btnConfirmar").classList.add("hidden");
+    ultimoCalculo = null;
     return;
   }
 
-  const calculo = App.Pedidos.calcular(cantidad, precioUnitario);
+  var calculo = App.Pedidos.calcular(cantidad, precioUnitario);
+
+  // Guardar datos para posible confirmación
+  ultimoCalculo = calculo;
+  ultimoItemId = itemId;
+  ultimoItemNombre = itemNombre;
 
   resultadoDiv.innerHTML =
     '<div class="order-summary">' +
-    '<div class="line"><span>Pastelito</span><span>' + itemNombre + " ×" + cantidad + "</span></div>" +
+    '<div class="line"><span>Pastelito</span><span>' + itemNombre + " &times;" + cantidad + "</span></div>" +
     '<div class="line"><span>Subtotal</span><span>$' + calculo.subtotal.toFixed(2) + "</span></div>" +
     '<div class="line"><span>IVA (19%)</span><span>$' + calculo.iva.toFixed(2) + "</span></div>" +
     '<div class="line total"><span>Total</span><span>$' + calculo.total.toFixed(2) + "</span></div>" +
     "</div>";
 
-  limpiarFormulario();
+  // Mostrar botón de confirmar
+  document.getElementById("btnConfirmar").classList.remove("hidden");
+}
+
+function confirmarPedido() {
+  if (!ultimoCalculo) return;
+
+  var btnConfirmar = document.getElementById("btnConfirmar");
+  var btnProcesar = document.getElementById("btnProcesar");
+  var resultadoDiv = document.getElementById("resultado");
+
+  btnConfirmar.disabled = true;
+  btnProcesar.disabled = true;
+  resultadoDiv.innerHTML += '<div class="msg msg-info">Guardando pedido…</div>';
+
+  var pedido = {
+    productId: ultimoItemId,
+    productName: ultimoItemNombre,
+    quantity: Number(document.getElementById("cantidad").value),
+    unitPrice: Number(document.getElementById("precioUnitario").value),
+    subtotal: ultimoCalculo.subtotal,
+    iva: ultimoCalculo.iva,
+    total: ultimoCalculo.total,
+    date: new Date().toISOString(),
+  };
+
+  App.Api.createPedido(pedido)
+    .then(function () {
+      resultadoDiv.innerHTML =
+        '<div class="msg msg-success">Pedido guardado exitosamente. ¡Gracias!</div>';
+      limpiarFormulario();
+      document.getElementById("btnConfirmar").classList.add("hidden");
+    })
+    .catch(function (err) {
+      console.error(err);
+      resultadoDiv.innerHTML =
+        '<div class="msg msg-error">No se pudo guardar el pedido. Intenta de nuevo.</div>';
+    })
+    .finally(function () {
+      btnConfirmar.disabled = false;
+      btnProcesar.disabled = false;
+      ultimoCalculo = null;
+    });
 }
 
 function limpiarFormulario() {

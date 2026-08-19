@@ -13,6 +13,7 @@ App.Api = (function () {
   "use strict";
 
   const BASE_URL = "https://stock-flow-2e23e-default-rtdb.firebaseio.com/menu.json";
+  const PEDIDOS_URL = "https://stock-flow-2e23e-default-rtdb.firebaseio.com/pedidos.json";
 
   const FALLBACK_MENU = {
     "1": { name: "Cupcake de vainilla",    price: 3500, image: "images/menu/cupcake_vainilla.jpg" },
@@ -48,12 +49,6 @@ App.Api = (function () {
 
   /**
    * Crea un producto nuevo en el menú.
-   * NOTA DE SEGURIDAD (Ejercicio 3): esta escritura viaja sin
-   * autenticación real hacia Firebase. En producción esto debe
-   * protegerse con Firebase Auth + reglas de Realtime Database
-   * (ver /firebase-rules-example.json). Aquí solo se exige haber
-   * iniciado sesión en el cliente (App.Auth), lo cual es una
-   * mejora didáctica, NO una medida de seguridad real.
    * @param {{name:string, price:number}} product
    */
   function createProduct(product) {
@@ -65,6 +60,71 @@ App.Api = (function () {
       if (!res.ok) throw new Error("No se pudo crear el producto (HTTP " + res.status + ")");
       return res.json();
     });
+  }
+
+  /**
+   * Actualiza un producto existente por su ID.
+   * @param {string} id
+   * @param {{name:string, price:number}} product
+   */
+  function updateProduct(id, product) {
+    var url = "https://stock-flow-2e23e-default-rtdb.firebaseio.com/menu/" + id + ".json";
+    return fetch(url, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(product),
+    }).then(function (res) {
+      if (!res.ok) throw new Error("No se pudo actualizar el producto (HTTP " + res.status + ")");
+      return res.json();
+    });
+  }
+
+  /**
+   * Elimina un producto por su ID.
+   * @param {string} id
+   */
+  function deleteProduct(id) {
+    var url = "https://stock-flow-2e23e-default-rtdb.firebaseio.com/menu/" + id + ".json";
+    return fetch(url, { method: "DELETE" }).then(function (res) {
+      if (!res.ok) throw new Error("No se pudo eliminar el producto (HTTP " + res.status + ")");
+      return res.json();
+    });
+  }
+
+  /* ---------- Pedidos (órdenes de compra) ---------- */
+
+  /**
+   * Guarda un pedido nuevo en Firebase.
+   * @param {{productId:string, productName:string, quantity:number, unitPrice:number, subtotal:number, iva:number, total:number}} pedido
+   */
+  function createPedido(pedido) {
+    return fetch(PEDIDOS_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(pedido),
+    }).then(function (res) {
+      if (!res.ok) throw new Error("No se pudo guardar el pedido (HTTP " + res.status + ")");
+      return res.json();
+    });
+  }
+
+  /**
+   * Obtiene todos los pedidos guardados.
+   * @returns {Promise<Object>} { id: {productId, productName, quantity, ...} }
+   */
+  function getPedidos() {
+    return fetch(PEDIDOS_URL)
+      .then(function (res) {
+        if (!res.ok) throw new Error("No se pudieron cargar los pedidos (HTTP " + res.status + ")");
+        return res.json();
+      })
+      .then(function (data) {
+        return data || {};
+      })
+      .catch(function (err) {
+        console.warn("Error cargando pedidos:", err.message);
+        return {};
+      });
   }
 
   /**
@@ -101,5 +161,9 @@ App.Api = (function () {
   return {
     getMenu: getMenu,
     createProduct: createProduct,
+    updateProduct: updateProduct,
+    deleteProduct: deleteProduct,
+    createPedido: createPedido,
+    getPedidos: getPedidos,
   };
 })();
