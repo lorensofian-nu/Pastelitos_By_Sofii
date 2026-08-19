@@ -21,39 +21,26 @@
   <div class="scallop-divider"></div>
 
   <main>
-    <section class="hero-carousel">
-      <div class="carousel-track" id="carouselTrack">
-        <!-- ====== SLIDE 1 ====== -->
-        <!-- Reemplaza el src con tu imagen: images/carousel/slide1.jpg -->
-        <div class="carousel-slide active">
-          <img class="carousel-img" src="images/carousel/lop.png" alt="Pastelitos frescos">
-          <div class="carousel-overlay">
-            <h1>Pastelitos By Sofii</h1>
-            <p>Repostería casera hecha con cariño</p>
-          </div>
-        </div>
-        <!-- ====== SLIDE 2 ====== -->
-        <!-- Reemplaza el src con tu imagen: images/carousel/slide2.jpg -->
-        <div class="carousel-slide">
-          <img class="carousel-img" src="images/carousel/slide2.jpg" alt="Menú del día">
-          <div class="carousel-overlay">
-            <h1>Directo desde la cocina</h1>
-            <p>Descubre nuestro menú del día con los mejores ingredientes</p>
-          </div>
-        </div>
-        <!-- ====== SLIDE 3 ====== -->
-        <!-- Reemplaza el src con tu imagen: images/carousel/slide3.jpg -->
-        <div class="carousel-slide">
-          <img class="carousel-img" src="images/carousel/slide3.jpg" alt="Hecho con amor">
-          <div class="carousel-overlay">
-            <h1>Hecho con amor</h1>
-            <p>Cada pastelito lleva una sonrisa incluida</p>
-          </div>
+    <section class="hero-carousel" id="heroCarousel">
+      <div class="hero-carousel__slide hero-carousel__slide--active" style="background-image:url('images/carousel/img1.jpg')">
+        <div class="hero-carousel__overlay">
+          <h1>Pastelitos By Sofii</h1>
+          <p>Repostería casera hecha con cariño</p>
         </div>
       </div>
-      <button class="carousel-btn carousel-btn--prev" id="carouselPrev">&#10094;</button>
-      <button class="carousel-btn carousel-btn--next" id="carouselNext">&#10095;</button>
-      <div class="carousel-dots" id="carouselDots"></div>
+      <div class="hero-carousel__slide" style="background-image:url('images/carousel/img2.jpg')">
+        <div class="hero-carousel__overlay">
+          <h1>Directo desde la cocina</h1>
+          <p>Los mejores ingredientes para los mejores momentos</p>
+        </div>
+      </div>
+      <div class="hero-carousel__slide" style="background-image:url('images/carousel/img3.jpg')">
+        <div class="hero-carousel__overlay">
+          <h1>Hecho con amor</h1>
+          <p>Cada pastelito lleva una sonrisa incluida</p>
+        </div>
+      </div>
+      <div class="hero-carousel__dots" id="carouselDots"></div>
     </section>
 
     <div class="page-wrap">
@@ -74,39 +61,37 @@
   <script src="js/nav.js"></script>
   <script src="js/pages/index-page.js"></script>
   <script>
-    (function() {
-      const track = document.getElementById('carouselTrack');
-      const slides = track.querySelectorAll('.carousel-slide');
-      const dotsContainer = document.getElementById('carouselDots');
-      const prevBtn = document.getElementById('carouselPrev');
-      const nextBtn = document.getElementById('carouselNext');
+    (function () {
+      const container = document.getElementById('heroCarousel');
+      const slides = container.querySelectorAll('.hero-carousel__slide');
+      const dotsBox = document.getElementById('carouselDots');
+      const total = slides.length;
       let current = 0;
-      let autoInterval;
+      let timer;
 
-      slides.forEach((_, i) => {
+      for (let i = 0; i < total; i++) {
         const dot = document.createElement('span');
-        dot.classList.add('carousel-dot');
-        if (i === 0) dot.classList.add('active');
-        dot.addEventListener('click', () => goTo(i));
-        dotsContainer.appendChild(dot);
-      });
+        dot.className = 'hero-carousel__dot' + (i === 0 ? ' hero-carousel__dot--active' : '');
+        dot.addEventListener('click', () => { goTo(i); resetTimer(); });
+        dotsBox.appendChild(dot);
+      }
 
       function goTo(index) {
-        slides[current].classList.remove('active');
-        dotsContainer.children[current].classList.remove('active');
-        current = (index + slides.length) % slides.length;
-        slides[current].classList.add('active');
-        dotsContainer.children[current].classList.add('active');
+        slides[current].classList.remove('hero-carousel__slide--active');
+        dotsBox.children[current].classList.remove('hero-carousel__dot--active');
+        current = index;
+        slides[current].classList.add('hero-carousel__slide--active');
+        dotsBox.children[current].classList.add('hero-carousel__dot--active');
       }
 
-      prevBtn.addEventListener('click', () => { goTo(current - 1); resetAuto(); });
-      nextBtn.addEventListener('click', () => { goTo(current + 1); resetAuto(); });
+      function next() { goTo((current + 1) % total); }
 
-      function resetAuto() {
-        clearInterval(autoInterval);
-        autoInterval = setInterval(() => goTo(current + 1), 4000);
+      function resetTimer() {
+        clearInterval(timer);
+        timer = setInterval(next, 3000);
       }
-      resetAuto();
+
+      resetTimer();
     })();
   </script>
 </body>
