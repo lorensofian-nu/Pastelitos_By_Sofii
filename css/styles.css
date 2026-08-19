@@ -8,8 +8,8 @@
 
 :root {
   /* Paleta: lila pastel + amarillo pastel (no tan claros) */
-  --butter: #F0C75E;
-  --butter-soft: #FDF0C4;
+  --butter: #F2D680;
+  --butter-soft: #FDF5DC;
   --lilac: #BA8FC7;
   --lilac-deep: #8E5FA8;
   --lilac-pale: #E4D1ED;
@@ -415,6 +415,30 @@ footer span {
 .hidden { display: none !important; }
 .text-center { text-align: center; }
 
+/* ---------- Sección de entrega ---------- */
+.delivery-section { margin-bottom: 16px; }
+.delivery-section > label { font-weight: 600; font-size: 0.92rem; color: var(--ink); display: block; margin-bottom: 8px; }
+
+.delivery-options { display: flex; gap: 12px; flex-wrap: wrap; }
+
+.delivery-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--white);
+  border: 2px solid var(--lilac);
+  border-radius: var(--radius-md);
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  flex: 1;
+  min-width: 180px;
+}
+
+.delivery-option:hover { background: var(--lilac-pale); }
+.delivery-option input[type="radio"] { accent-color: var(--lilac-deep); width: 18px; height: 18px; }
+.delivery-label { font-weight: 600; font-size: 0.95rem; }
+
 /* ---------- Layout amplio para admin ---------- */
 .page-wrap--wide {
   max-width: 960px;
@@ -424,7 +448,7 @@ footer span {
 .card--dashboard {
   background: var(--butter-soft);
   border: 3px solid var(--butter);
-  box-shadow: 0 12px 40px rgba(240, 199, 94, 0.25), 0 4px 12px rgba(142, 95, 168, 0.06);
+  box-shadow: 0 12px 40px rgba(242, 214, 128, 0.25), 0 4px 12px rgba(142, 95, 168, 0.06);
 }
 
 .dash-header {
@@ -442,7 +466,7 @@ footer span {
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 14px;
   margin-top: 20px;
 }
@@ -462,10 +486,12 @@ footer span {
   box-shadow: 0 8px 24px rgba(142,95,168,0.10);
 }
 
-.stat-box--pedidos { border-color: #BA8FC7; }
-.stat-box--productos { border-color: #E8A0B8; }
-.stat-box--ingresos { border-color: #F0C75E; }
-.stat-box--promedio { border-color: #2FAE66; }
+.stat-box--pedidos { border-color: #D4A5E8; }
+.stat-box--tienda { border-color: #D4A5E8; background: rgba(212, 165, 232, 0.08); }
+.stat-box--domicilio { border-color: #F7C6D0; background: rgba(247, 198, 208, 0.08); }
+.stat-box--productos { border-color: #F7C6D0; }
+.stat-box--ingresos { border-color: #F9D89C; }
+.stat-box--promedio { border-color: #A8D8B9; }
 
 .stat-icon {
   font-size: 1.5rem;
@@ -492,7 +518,7 @@ footer span {
 /* ---------- Gráficos ---------- */
 .charts-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 18px;
   margin-top: 24px;
 }
@@ -648,7 +674,7 @@ footer span {
 /* ---------- Responsive ---------- */
 @media (max-width: 768px) {
   .page-wrap--wide { max-width: 100%; }
-  .charts-grid { grid-template-columns: 1fr; }
+  .charts-grid { grid-template-columns: 1fr 1fr; }
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
   .chart-container { height: 220px; }
   .carousel-img { height: 300px; }
@@ -658,6 +684,7 @@ footer span {
   header.topbar { padding: 14px 4vw; }
   .page-wrap { padding: 28px 14px 44px; }
   .stats-grid { grid-template-columns: 1fr 1fr; }
+  .charts-grid { grid-template-columns: 1fr; }
   .stat-number { font-size: 1.4rem; }
   .carousel-img { height: 220px; }
   .productos-table th:nth-child(1),

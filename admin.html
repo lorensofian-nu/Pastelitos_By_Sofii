@@ -38,6 +38,16 @@
           <div class="stat-number" id="statTotalPedidos">0</div>
           <div class="stat-label">Pedidos totales</div>
         </div>
+        <div class="stat-box stat-box--tienda">
+          <div class="stat-icon">🏪</div>
+          <div class="stat-number" id="statTienda">0</div>
+          <div class="stat-label">Recoger en tienda</div>
+        </div>
+        <div class="stat-box stat-box--domicilio">
+          <div class="stat-icon">🚗</div>
+          <div class="stat-number" id="statDomicilio">0</div>
+          <div class="stat-label">Domicilio</div>
+        </div>
         <div class="stat-box stat-box--productos">
           <div class="stat-icon">🧁</div>
           <div class="stat-number" id="statTotalProductos">0</div>
@@ -67,6 +77,12 @@
           <h3>Distribución de ingresos</h3>
           <div class="chart-container">
             <canvas id="chartDona"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <h3>Pedidos: Tienda vs Domicilio</h3>
+          <div class="chart-container">
+            <canvas id="chartEntrega"></canvas>
           </div>
         </div>
       </div>

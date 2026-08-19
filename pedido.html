@@ -42,6 +42,39 @@
         <input type="number" id="precioUnitario" min="0" step="0.01" placeholder="Se autocompleta al elegir">
       </div>
 
+      <div class="delivery-section">
+        <label>Tipo de entrega</label>
+        <div class="delivery-options">
+          <label class="delivery-option">
+            <input type="radio" name="entrega" value="tienda" checked>
+            <span class="delivery-label">🏪 Recoger en tienda</span>
+          </label>
+          <label class="delivery-option">
+            <input type="radio" name="entrega" value="domicilio">
+            <span class="delivery-label">🚗 Domicilio</span>
+          </label>
+        </div>
+      </div>
+
+      <div id="domicilioFields" class="hidden">
+        <div class="field">
+          <label for="dirDireccion">Dirección completa</label>
+          <input type="text" id="dirDireccion" placeholder="Calle, número, apto, etc.">
+        </div>
+        <div class="field">
+          <label for="dirBarrio">Barrio / Ciudad</label>
+          <input type="text" id="dirBarrio" placeholder="Ej: Centro, Medellín">
+        </div>
+        <div class="field">
+          <label for="dirTelefono">Teléfono de contacto</label>
+          <input type="text" id="dirTelefono" placeholder="Ej: 300 123 4567">
+        </div>
+        <div class="field">
+          <label for="dirReferencia">Referencia (opcional)</label>
+          <input type="text" id="dirReferencia" placeholder="Ej: Portón azul, torre 3">
+        </div>
+      </div>
+
       <div class="btn-row">
         <button id="btnProcesar" class="btn btn-primary" type="button">Calcular pedido</button>
         <button id="btnConfirmar" class="btn btn-accent hidden" type="button">Confirmar pedido</button>

@@ -33,10 +33,11 @@ var menuCache = {};
 /* ========== Gráficos Chart.js ========== */
 var chartBarrasInstance = null;
 var chartDonaInstance = null;
+var chartEntregaInstance = null;
 
 var chartColors = [
-  "#FFD93B", "#B181E0", "#FF8FB1", "#2FAE66", "#6A3FA0",
-  "#FF6B6B", "#4ECDC4", "#45B7D1", "#F7DC6F", "#BB8FCE"
+  "#D4A5E8", "#F7C6D0", "#A8D8B9", "#F9D89C", "#B5D4F1",
+  "#E8B5CE", "#C3E6CB", "#F5D5A8", "#D1C4E9", "#FFE0B2"
 ];
 
 /* ========== Dashboard / Stats ========== */
@@ -52,10 +53,19 @@ function cargarDashboard() {
 
       var ingresos = 0;
       var ventasPorProducto = {};
+      var tiendaCount = 0;
+      var domicilioCount = 0;
 
       Object.keys(pedidos).forEach(function (id) {
         var p = pedidos[id];
         ingresos += p.total || 0;
+
+        // Contar tipo de entrega
+        if (p.entrega && p.entrega.tipo === "domicilio") {
+          domicilioCount++;
+        } else {
+          tiendaCount++;
+        }
 
         var key = p.productId || p.productName;
         if (!ventasPorProducto[key]) {
@@ -71,6 +81,8 @@ function cargarDashboard() {
       document.getElementById("statTotalProductos").textContent = totalProductos;
       document.getElementById("statIngresos").textContent = "$" + Number(ingresos).toFixed(0);
       document.getElementById("statPromedio").textContent = "$" + Number(promedio).toFixed(0);
+      document.getElementById("statTienda").textContent = tiendaCount;
+      document.getElementById("statDomicilio").textContent = domicilioCount;
 
       var sorted = Object.values(ventasPorProducto).sort(function (a, b) {
         return b.quantity - a.quantity;
@@ -78,6 +90,7 @@ function cargarDashboard() {
 
       renderCharts(sorted, totalProductos);
       renderTopList(sorted);
+      renderEntregaChart(tiendaCount, domicilioCount);
     })
     .catch(function (err) {
       console.error("Error cargando dashboard:", err);
@@ -255,6 +268,55 @@ function renderTopList(sorted) {
   });
   html += '</div>';
   topDiv.innerHTML = html;
+}
+
+function renderEntregaChart(tiendaCount, domicilioCount) {
+  if (typeof Chart === "undefined") return;
+
+  if (chartEntregaInstance) chartEntregaInstance.destroy();
+
+  var ctx = document.getElementById("chartEntrega").getContext("2d");
+  chartEntregaInstance = new Chart(ctx, {
+    type: "pie",
+    data: {
+      labels: ["Recoger en tienda", "Domicilio"],
+      datasets: [{
+        data: [tiendaCount, domicilioCount],
+        backgroundColor: ["#D4A5E8", "#F7C6D0"],
+        borderColor: "#FFFFFF",
+        borderWidth: 3,
+        hoverOffset: 8,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: "bottom",
+          labels: {
+            font: { family: "Quicksand", size: 12, weight: 600 },
+            color: "#3A2E4D",
+            padding: 14,
+            usePointStyle: true,
+            pointStyleWidth: 12,
+          }
+        },
+        tooltip: {
+          backgroundColor: "#3A2E4D",
+          titleFont: { family: "Fredoka", size: 14 },
+          bodyFont: { family: "Quicksand", size: 13 },
+          cornerRadius: 12,
+          padding: 12,
+        }
+      },
+      animation: {
+        animateRotate: true,
+        duration: 1200,
+        easing: "easeOutQuart"
+      }
+    }
+  });
 }
 
 /* ========== CRUD: Crear ========== */

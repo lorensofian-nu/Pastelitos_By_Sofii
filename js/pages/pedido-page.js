@@ -11,7 +11,55 @@ window.addEventListener("DOMContentLoaded", function () {
   document.getElementById("itemSelect").addEventListener("change", autocompletarPrecio);
   document.getElementById("btnProcesar").addEventListener("click", procesarPedido);
   document.getElementById("btnConfirmar").addEventListener("click", confirmarPedido);
+
+  // Toggle campos de domicilio según tipo de entrega
+  var radiosEntrega = document.querySelectorAll('input[name="entrega"]');
+  radiosEntrega.forEach(function (radio) {
+    radio.addEventListener("change", toggleDomicilioFields);
+  });
 });
+
+function toggleDomicilioFields() {
+  var esDomicilio = document.querySelector('input[name="entrega"]:checked').value === "domicilio";
+  var container = document.getElementById("domicilioFields");
+  if (esDomicilio) {
+    container.classList.remove("hidden");
+  } else {
+    container.classList.add("hidden");
+  }
+}
+
+function getTipoEntrega() {
+  return document.querySelector('input[name="entrega"]:checked').value;
+}
+
+function getDatosEntrega() {
+  var tipo = getTipoEntrega();
+  if (tipo === "tienda") {
+    return { tipo: "tienda" };
+  }
+  return {
+    tipo: "domicilio",
+    direccion: document.getElementById("dirDireccion").value.trim(),
+    barrio: document.getElementById("dirBarrio").value.trim(),
+    telefono: document.getElementById("dirTelefono").value.trim(),
+    referencia: document.getElementById("dirReferencia").value.trim(),
+  };
+}
+
+function validarDireccion() {
+  var tipo = getTipoEntrega();
+  if (tipo === "tienda") return true;
+
+  var dir = document.getElementById("dirDireccion").value.trim();
+  var barrio = document.getElementById("dirBarrio").value.trim();
+  var tel = document.getElementById("dirTelefono").value.trim();
+
+  if (!dir || !barrio || !tel) {
+    return false;
+  }
+  return true;
+}
 
 var ultimoCalculo = null;
 var ultimoItemId = null;
@@ -64,6 +112,14 @@ function procesarPedido() {
     return;
   }
 
+  // Validar dirección si es domicilio
+  if (getTipoEntrega() === "domicilio" && !validarDireccion()) {
+    resultadoDiv.innerHTML = '<div class="msg msg-error">Para domicilio completa: dirección, barrio y teléfono.</div>';
+    document.getElementById("btnConfirmar").classList.add("hidden");
+    ultimoCalculo = null;
+    return;
+  }
+
   var calculo = App.Pedidos.calcular(cantidad, precioUnitario);
 
   // Guardar datos para posible confirmación
@@ -71,9 +127,13 @@ function procesarPedido() {
   ultimoItemId = itemId;
   ultimoItemNombre = itemNombre;
 
+  var tipoEntrega = getTipoEntrega();
+  var textoEntrega = tipoEntrega === "tienda" ? "Recoger en tienda" : "Domicilio";
+
   resultadoDiv.innerHTML =
     '<div class="order-summary">' +
     '<div class="line"><span>Pastelito</span><span>' + itemNombre + " &times;" + cantidad + "</span></div>" +
+    '<div class="line"><span>Entrega</span><span>' + textoEntrega + "</span></div>" +
     '<div class="line"><span>Subtotal</span><span>$' + calculo.subtotal.toFixed(2) + "</span></div>" +
     '<div class="line"><span>IVA (19%)</span><span>$' + calculo.iva.toFixed(2) + "</span></div>" +
     '<div class="line total"><span>Total</span><span>$' + calculo.total.toFixed(2) + "</span></div>" +
@@ -102,6 +162,7 @@ function confirmarPedido() {
     subtotal: ultimoCalculo.subtotal,
     iva: ultimoCalculo.iva,
     total: ultimoCalculo.total,
+    entrega: getDatosEntrega(),
     date: new Date().toISOString(),
   };
 
@@ -128,4 +189,11 @@ function limpiarFormulario() {
   document.getElementById("itemSelect").value = "";
   document.getElementById("cantidad").value = "";
   document.getElementById("precioUnitario").value = "";
+  // Reset entrega a tienda
+  document.querySelector('input[name="entrega"][value="tienda"]').checked = true;
+  toggleDomicilioFields();
+  document.getElementById("dirDireccion").value = "";
+  document.getElementById("dirBarrio").value = "";
+  document.getElementById("dirTelefono").value = "";
+  document.getElementById("dirReferencia").value = "";
 }
