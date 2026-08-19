@@ -21,12 +21,33 @@
   <div class="scallop-divider"></div>
 
   <main>
-    <section class="hero">
-      <div class="hero-inner">
-        <h1>Pastelitos By Sofii</h1>
-        <p class="tagline">Repostería casera hecha con cariño. Este es nuestro menú del día, directo desde la cocina.</p>
-        <div class="cupcake-row">🧁 🍰 🍩</div>
+    <section class="hero-carousel">
+      <div class="carousel-track" id="carouselTrack">
+        <div class="carousel-slide active">
+          <div class="carousel-content">
+            <h1>Pastelitos By Sofii</h1>
+            <p>Repostería casera hecha con cariño</p>
+            <div class="carousel-emoji">🧁 🍰 🍩</div>
+          </div>
+        </div>
+        <div class="carousel-slide">
+          <div class="carousel-content">
+            <h1>Directo desde la cocina</h1>
+            <p>Descubre nuestro menú del día con los mejores ingredientes</p>
+            <div class="carousel-emoji">🍪 🧁 🎂</div>
+          </div>
+        </div>
+        <div class="carousel-slide">
+          <div class="carousel-content">
+            <h1>Hecho con amor</h1>
+            <p>Cada pastelito lleva una sonrisa incluida</p>
+            <div class="carousel-emoji">💕 🧁 💝</div>
+          </div>
+        </div>
       </div>
+      <button class="carousel-btn carousel-btn--prev" id="carouselPrev">&#10094;</button>
+      <button class="carousel-btn carousel-btn--next" id="carouselNext">&#10095;</button>
+      <div class="carousel-dots" id="carouselDots"></div>
     </section>
 
     <div class="page-wrap">
@@ -38,7 +59,7 @@
     </div>
   </main>
 
-  <footer>Pastelitos By Sofii · Taller de refactorización (MPA)</footer>
+  <footer>Pastelitos By Sofii · pastelitosbysofii@gmail.com</footer>
 
   <!-- Módulos (orden importa: dependencias primero) -->
   <script src="js/api.js"></script>
@@ -46,5 +67,41 @@
   <script src="js/menu.js"></script>
   <script src="js/nav.js"></script>
   <script src="js/pages/index-page.js"></script>
+  <script>
+    (function() {
+      const track = document.getElementById('carouselTrack');
+      const slides = track.querySelectorAll('.carousel-slide');
+      const dotsContainer = document.getElementById('carouselDots');
+      const prevBtn = document.getElementById('carouselPrev');
+      const nextBtn = document.getElementById('carouselNext');
+      let current = 0;
+      let autoInterval;
+
+      slides.forEach((_, i) => {
+        const dot = document.createElement('span');
+        dot.classList.add('carousel-dot');
+        if (i === 0) dot.classList.add('active');
+        dot.addEventListener('click', () => goTo(i));
+        dotsContainer.appendChild(dot);
+      });
+
+      function goTo(index) {
+        slides[current].classList.remove('active');
+        dotsContainer.children[current].classList.remove('active');
+        current = (index + slides.length) % slides.length;
+        slides[current].classList.add('active');
+        dotsContainer.children[current].classList.add('active');
+      }
+
+      prevBtn.addEventListener('click', () => { goTo(current - 1); resetAuto(); });
+      nextBtn.addEventListener('click', () => { goTo(current + 1); resetAuto(); });
+
+      function resetAuto() {
+        clearInterval(autoInterval);
+        autoInterval = setInterval(() => goTo(current + 1), 4000);
+      }
+      resetAuto();
+    })();
+  </script>
 </body>
 </html>
