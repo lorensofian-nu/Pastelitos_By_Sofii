@@ -45,6 +45,40 @@ App.Api = (function () {
     "27": { name: "Té de manzanilla",         price: 2000, image: "images/menu/te_manzanilla.jpg" }
   };
 
+  // Datos de ejemplo para pedidos (fallback si Firebase no responde)
+  const FALLBACK_PEDIDOS = {
+    "-P-1": {
+      productId: "1", productName: "Cupcake de vainilla", quantity: 3, unitPrice: 3500,
+      subtotal: 10500, iva: 1995, total: 12495,
+      entrega: { tipo: "tienda" },
+      date: "2026-08-18T10:00:00.000Z"
+    },
+    "-P-2": {
+      productId: "2", productName: "Brownie de chocolate", quantity: 2, unitPrice: 4000,
+      subtotal: 8000, iva: 1520, total: 9520,
+      entrega: { tipo: "domicilio", direccion: "Calle 10 #5-20", barrio: "Centro", telefono: "3001234567", referencia: "Casa blanca" },
+      date: "2026-08-17T14:30:00.000Z"
+    },
+    "-P-3": {
+      productId: "5", productName: "Pastel de fresa", quantity: 1, unitPrice: 5000,
+      subtotal: 5000, iva: 950, total: 5950,
+      entrega: { tipo: "tienda" },
+      date: "2026-08-16T11:15:00.000Z"
+    },
+    "-P-4": {
+      productId: "7", productName: "Cheesecake de frutos rojos", quantity: 1, unitPrice: 6500,
+      subtotal: 6500, iva: 1235, total: 7735,
+      entrega: { tipo: "domicilio", direccion: "Avenida Principal", barrio: "Norte", telefono: "3009876543" },
+      date: "2026-08-15T09:45:00.000Z"
+    },
+    "-P-5": {
+      productId: "12", productName: "Croissant clásico", quantity: 4, unitPrice: 3800,
+      subtotal: 15200, iva: 2888, total: 18088,
+      entrega: { tipo: "tienda" },
+      date: "2026-08-14T16:20:00.000Z"
+    }
+  };
+
   /**
    * Obtiene el menú desde Firebase Realtime Database.
    * Si Firebase no responde, devuelve el menú de ejemplo local.
@@ -131,6 +165,7 @@ App.Api = (function () {
 
   /**
    * Obtiene todos los pedidos guardados.
+   * Si Firebase no responde, devuelve los pedidos de ejemplo local.
    * @returns {Promise<Object>} { id: {productId, productName, quantity, ...} }
    */
   function getPedidos() {
@@ -140,11 +175,13 @@ App.Api = (function () {
         return res.json();
       })
       .then(function (data) {
-        return data || {};
+        // Si Firebase devolvió vacío o null, usar fallback
+        if (!data || Object.keys(data).length === 0) return FALLBACK_PEDIDOS;
+        return data;
       })
       .catch(function (err) {
-        console.warn("Error cargando pedidos:", err.message);
-        return {};
+        console.warn("Firebase no disponible, usando pedidos de ejemplo:", err.message);
+        return FALLBACK_PEDIDOS;
       });
   }
 
