@@ -22,6 +22,27 @@ App.Api = (function () {
     "4": { name: "Muffin de arándanos",    price: 3800, image: "images/menu/muffin_arandanos.jpg" },
     "5": { name: "Pastel de fresa",        price: 5000, image: "images/menu/pastel_fresa.jpg" },
     "6": { name: "Donut glaseado",         price: 3200, image: "images/menu/donut_glaseado.jpg" },
+    "7": { name: "Cheesecake de frutos rojos", price: 6500, image: "images/menu/cheesecake_frutos_rojos.jpg" },
+    "8": { name: "Tiramisú clásico",        price: 7200, image: "images/menu/tiramisu.jpg" },
+    "9": { name: "Flan de caramelo",        price: 4500, image: "images/menu/flan_caramelo.jpg" },
+    "10": { name: "Panna cotta de vainilla", price: 5800, image: "images/menu/panna_cotta.jpg" },
+    "11": { name: "Tarta de limón merengada", price: 5500, image: "images/menu/tarta_limon.jpg" },
+    "12": { name: "Croissant clásico",       price: 3800, image: "images/menu/croissant.jpg" },
+    "13": { name: "Concha de azúcar",        price: 2800, image: "images/menu/concha_azucar.jpg" },
+    "14": { name: "Pan de muerto",           price: 4200, image: "images/menu/pan_muerto.jpg" },
+    "15": { name: "Orejas (hojaldre)",       price: 3500, image: "images/menu/orejas_hojaldre.jpg" },
+    "16": { name: "Empanada de piña",        price: 3200, image: "images/menu/empanada_pina.jpg" },
+    "17": { name: "Pastel de chocolate negro", price: 6800, image: "images/menu/pastel_chocolate_negro.jpg" },
+    "18": { name: "Pastel de zanahoria",     price: 6200, image: "images/menu/pastel_zanahoria.jpg" },
+    "19": { name: "Pastel de red velvet",     price: 7500, image: "images/menu/pastel_red_velvet.jpg" },
+    "20": { name: "Tres leches",             price: 5800, image: "images/menu/tres_leches.jpg" },
+    "21": { name: "Galleta de avena y pasas", price: 2200, image: "images/menu/galleta_avena.jpg" },
+    "22": { name: "Alfajor de maicena",      price: 2500, image: "images/menu/alfajor_maicena.jpg" },
+    "23": { name: "Churros con chocolate",   price: 4000, image: "images/menu/churros_chocolate.jpg" },
+    "24": { name: "Palmeritas de hojaldre",  price: 2800, image: "images/menu/palmeritas.jpg" },
+    "25": { name: "Chocolate caliente",      price: 3500, image: "images/menu/chocolate_caliente.jpg" },
+    "26": { name: "Café con leche",          price: 2500, image: "images/menu/cafe_con_leche.jpg" },
+    "27": { name: "Té de manzanilla",         price: 2000, image: "images/menu/te_manzanilla.jpg" }
   };
 
   /**

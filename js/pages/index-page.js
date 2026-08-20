@@ -28,11 +28,28 @@ function getImageForName(name) {
   // Repostería
   if (n.includes("cupcake"))                          return "images/menu/cupcake_vainilla.jpg";
   if (n.includes("brownie"))                          return "images/menu/brownie_chocolate.jpg";
-  if (n.includes("galleta") || n.includes("cookie"))  return "images/menu/galleta_mantequilla.jpg";
+  if (n.includes("galleta") || n.includes("cookie") || n.includes("alfajor")) return "images/menu/galleta_mantequilla.jpg";
   if (n.includes("muffin"))                           return "images/menu/muffin_arandanos.jpg";
   if (n.includes("pastel") || n.includes("torta") || n.includes("cake")) return "images/menu/pastel_fresa.jpg";
   if (n.includes("donut") || n.includes("dona") || n.includes("donu"))   return "images/menu/donut_glaseado.jpg";
   if (n.includes("croissant") || n.includes("cuernito"))                 return "images/menu/croissant.jpg";
+  if (n.includes("cheesecake"))                         return "images/menu/cheesecake_frutos_rojos.jpg";
+  if (n.includes("tiramisu"))                          return "images/menu/tiramisu.jpg";
+  if (n.includes("flan"))                             return "images/menu/flan_caramelo.jpg";
+  if (n.includes("panna cotta"))                       return "images/menu/panna_cotta.jpg";
+  if (n.includes("tarta") && n.includes("limon"))    return "images/menu/tarta_limon.jpg";
+  if (n.includes("tres leches"))                       return "images/menu/tres_leches.jpg";
+  if (n.includes("concha"))                           return "images/menu/concha_azucar.jpg";
+  if (n.includes("pan de muerto"))                    return "images/menu/pan_muerto.jpg";
+  if (n.includes("orejas") || n.includes("hojaldre") || n.includes("palmeritas")) return "images/menu/palmeritas.jpg";
+  if (n.includes("empanada"))                          return "images/menu/empanada_pina.jpg";
+  if (n.includes("churros"))                           return "images/menu/churros_chocolate.jpg";
+  if (n.includes("chocolate caliente"))               return "images/menu/chocolate_caliente.jpg";
+  if (n.includes("cafe") || n.includes("coffee"))    return "images/menu/cafe_con_leche.jpg";
+  if (n.includes("te") || n.includes("té"))          return "images/menu/te_manzanilla.jpg";
+  if (n.includes("red velvet"))                        return "images/menu/pastel_red_velvet.jpg";
+  if (n.includes("zanahoria"))                         return "images/menu/pastel_zanahoria.jpg";
+  if (n.includes("chocolate negro"))                 return "images/menu/pastel_chocolate_negro.jpg";
   // Comida
   if (n.includes("bandeja"))                          return "images/menu/bandeja_paisa.jpg";
   if (n.includes("papa") || n.includes("frita"))      return "images/menu/papas_fritas.jpg";
