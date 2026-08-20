@@ -22,7 +22,19 @@ window.addEventListener("DOMContentLoaded", function () {
   });
 
   cargarProductos();
-  cargarDashboard();
+  
+  // Esperar a que Chart.js esté disponible antes de cargar el dashboard
+  function waitForChartjs() {
+    if (typeof Chart !== "undefined") {
+      cargarDashboard();
+    } else {
+      // Si Chart.js no está cargado, esperar y volver a intentar
+      setTimeout(waitForChartjs, 100);
+    }
+  }
+  
+  // Iniciar la espera por Chart.js (se carga desde CDN en admin.html)
+  waitForChartjs();
 });
 
 /* ========== Variables de paginación ========== */
@@ -58,10 +70,13 @@ function cargarDashboard() {
 
       Object.keys(pedidos).forEach(function (id) {
         var p = pedidos[id];
-        ingresos += p.total || 0;
+        
+        // Asegurar que los valores sean números
+        ingresos += Number(p.total || 0);
 
-        // Contar tipo de entrega
-        if (p.entrega && p.entrega.tipo === "domicilio") {
+        // Contar tipo de entrega (manejar casos donde entrega no existe o tiene formato diferente)
+        var tipoEntrega = (p.entrega && p.entrega.tipo) ? p.entrega.tipo.toLowerCase() : "tienda";
+        if (tipoEntrega === "domicilio") {
           domicilioCount++;
         } else {
           tiendaCount++;
@@ -69,10 +84,10 @@ function cargarDashboard() {
 
         var key = p.productId || p.productName;
         if (!ventasPorProducto[key]) {
-          ventasPorProducto[key] = { name: p.productName, quantity: 0, total: 0 };
+          ventasPorProducto[key] = { name: p.productName || "Desconocido", quantity: 0, total: 0 };
         }
-        ventasPorProducto[key].quantity += p.quantity || 0;
-        ventasPorProducto[key].total += p.total || 0;
+        ventasPorProducto[key].quantity += Number(p.quantity || 0);
+        ventasPorProducto[key].total += Number(p.total || 0);
       });
 
       var promedio = totalPedidos > 0 ? ingresos / totalPedidos : 0;
@@ -101,6 +116,15 @@ function renderCharts(sorted, totalProductos) {
   if (typeof Chart === "undefined") {
     document.getElementById("topProductos").innerHTML =
       '<p class="msg msg-info">Chart.js no se pudo cargar. Solo se muestra la lista.</p>';
+    return;
+  }
+  
+  // Verificar que los contenedores canvas existan
+  var chartBarrasCanvas = document.getElementById("chartBarras");
+  var chartDonaCanvas = document.getElementById("chartDona");
+  
+  if (!chartBarrasCanvas || !chartDonaCanvas) {
+    console.warn("Contenedores de gráficos no encontrados");
     return;
   }
 
@@ -272,10 +296,16 @@ function renderTopList(sorted) {
 
 function renderEntregaChart(tiendaCount, domicilioCount) {
   if (typeof Chart === "undefined") return;
+  
+  var chartEntregaCanvas = document.getElementById("chartEntrega");
+  if (!chartEntregaCanvas) {
+    console.warn("Contenedor chartEntrega no encontrado");
+    return;
+  }
 
   if (chartEntregaInstance) chartEntregaInstance.destroy();
 
-  var ctx = document.getElementById("chartEntrega").getContext("2d");
+  var ctx = chartEntregaCanvas.getContext("2d");
   chartEntregaInstance = new Chart(ctx, {
     type: "pie",
     data: {
