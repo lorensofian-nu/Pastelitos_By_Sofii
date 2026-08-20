@@ -12,8 +12,8 @@ window.App = window.App || {};
 App.Api = (function () {
   "use strict";
 
-  const BASE_URL = "https://pastelitos-by-sofiii-default-rtdb.firebaseio.com/menu.json";
-  const PEDIDOS_URL = "https://pastelitos-by-sofiii-default-rtdb.firebaseio.com/pedidos.json";
+  const BASE_URL = "https://pastelitos-by-sofiii-default-rtdb.europe-west1.firebasedatabase.app/menu.json";
+  const PEDIDOS_URL = "https://pastelitos-by-sofiii-default-rtdb.europe-west1.firebasedatabase.app/pedidos.json";
 
   const FALLBACK_MENU = {
     "1": { name: "Cupcake de vainilla",    price: 3500, image: "images/menu/cupcake_vainilla.jpg" },
@@ -68,7 +68,7 @@ App.Api = (function () {
    * @param {{name:string, price:number}} product
    */
   function updateProduct(id, product) {
-    var url = "https://pastelitos-by-sofiii-default-rtdb.firebaseio.com/menu/.json";
+    var url = "https://pastelitos-by-sofiii-default-rtdb.europe-west1.firebasedatabase.app/menu/" + id + ".json";
     return fetch(url, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -84,7 +84,7 @@ App.Api = (function () {
    * @param {string} id
    */
   function deleteProduct(id) {
-    var url = "https://pastelitos-by-sofiii-default-rtdb.firebaseio.com/menu/.json";
+    var url = "https://pastelitos-by-sofiii-default-rtdb.europe-west1.firebasedatabase.app/menu/" + id + ".json";
     return fetch(url, { method: "DELETE" }).then(function (res) {
       if (!res.ok) throw new Error("No se pudo eliminar el producto (HTTP " + res.status + ")");
       return res.json();
