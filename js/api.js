@@ -68,7 +68,7 @@ App.Api = (function () {
    * @param {{name:string, price:number}} product
    */
   function updateProduct(id, product) {
-    var url = "https://pastelitos-by-sofiii-default-rtdb.firebaseio.com/menu/" + id + ".json";
+    var url = "https://pastelitos-by-sofiii-default-rtdb.firebaseio.com/menu/.json";
     return fetch(url, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -84,7 +84,7 @@ App.Api = (function () {
    * @param {string} id
    */
   function deleteProduct(id) {
-    var url = "https://pastelitos-by-sofiii-default-rtdb.firebaseio.com/menu/" + id + ".json";
+    var url = "https://pastelitos-by-sofiii-default-rtdb.firebaseio.com/menu/.json";
     return fetch(url, { method: "DELETE" }).then(function (res) {
       if (!res.ok) throw new Error("No se pudo eliminar el producto (HTTP " + res.status + ")");
       return res.json();
