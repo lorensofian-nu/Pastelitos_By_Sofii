@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agregar Productos - Pastelitos By Sofii</title>
+    <style>
+        body {
+            font-family: 'Quicksand', Arial, sans-serif;
+            background: linear-gradient(135deg, #F7C6D0 0%, #D4A5E8 100%);
+            margin: 0;
+            padding: 40px 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            color: #6B5C82;
+            font-family: 'Fredoka', sans-serif;
+            margin-bottom: 20px;
+        }
+        .progress {
+            margin: 20px 0;
+            text-align: left;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #F0E6F6;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #D4A5E8, #F7C6D0);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .log {
+            background: #F8F4FF;
+            border: 2px solid #E8D5F0;
+            border-radius: 12px;
+            padding: 15px;
+            margin: 20px 0;
+            max-height: 200px;
+            overflow-y: auto;
+            text-align: left;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 12px;
+        }
+        .success {
+            color: #2E8B57;
+        }
+        .error {
+            color: #B22222;
+        }
+        .btn {
+            background: linear-gradient(135deg, #D4A5E8 0%, #F7C6D0 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(212, 165, 232, 0.4);
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .summary {
+            margin-top: 20px;
+            padding: 15px;
+            background: #F8F4FF;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧁 Agregar Productos al Menú</h1>
+        <p>Este script agregará 20 productos adicionales a Firebase Realtime Database.</p>
+        
+        <div class="progress">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <span id="progressText">0/20 productos</span>
+        </div>
+        
+        <div class="log" id="log"></div>
+        
+        <button class="btn" id="startBtn">🚀 Iniciar Agregado de Productos</button>
+        
+        <div class="summary" id="summary" style="display: none;"></div>
+    </div>
+
+    <script>
+        const BASE_URL = "https://pastelitos-by-sofiii-default-rtdb.europe-west1.firebasedatabase.app/menu.json";
+
+        const NEW_PRODUCTS = [
+            { name: "Cheesecake de frutos rojos", price: 6500, image: "images/menu/cheesecake_frutos_rojos.jpg" },
+            { name: "Tiramisú clásico", price: 7200, image: "images/menu/tiramisu.jpg" },
+            { name: "Flan de caramelo", price: 4500, image: "images/menu/flan_caramelo.jpg" },
+            { name: "Panna cotta de vainilla", price: 5800, image: "images/menu/panna_cotta.jpg" },
+            { name: "Tarta de limón merengada", price: 5500, image: "images/menu/tarta_limon.jpg" },
+            { name: "Croissant clásico", price: 3800, image: "images/menu/croissant.jpg" },
+            { name: "Concha de azúcar", price: 2800, image: "images/menu/concha_azucar.jpg" },
+            { name: "Pan de muerto", price: 4200, image: "images/menu/pan_muerto.jpg" },
+            { name: "Orejas (hojaldre)", price: 3500, image: "images/menu/orejas_hojaldre.jpg" },
+            { name: "Empanada de piña", price: 3200, image: "images/menu/empanada_pina.jpg" },
+            { name: "Pastel de chocolate negro", price: 6800, image: "images/menu/pastel_chocolate_negro.jpg" },
+            { name: "Pastel de zanahoria", price: 6200, image: "images/menu/pastel_zanahoria.jpg" },
+            { name: "Pastel de red velvet", price: 7500, image: "images/menu/pastel_red_velvet.jpg" },
+            { name: "Tres leches", price: 5800, image: "images/menu/tres_leches.jpg" },
+            { name: "Galleta de avena y pasas", price: 2200, image: "images/menu/galleta_avena.jpg" },
+            { name: "Alfajor de maicena", price: 2500, image: "images/menu/alfajor_maicena.jpg" },
+            { name: "Churros con chocolate", price: 4000, image: "images/menu/churros_chocolate.jpg" },
+            { name: "Palmeritas de hojaldre", price: 2800, image: "images/menu/palmeritas.jpg" },
+            { name: "Chocolate caliente", price: 3500, image: "images/menu/chocolate_caliente.jpg" },
+            { name: "Café con leche", price: 2500, image: "images/menu/cafe_con_leche.jpg" },
+            { name: "Té de manzanilla", price: 2000, image: "images/menu/te_manzanilla.jpg" }
+        ];
+
+        const logElement = document.getElementById('log');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const startBtn = document.getElementById('startBtn');
+        const summaryElement = document.getElementById('summary');
+
+        let successCount = 0;
+        let errorCount = 0;
+        let isRunning = false;
+
+        function log(message, isError = false) {
+            const entry = document.createElement('div');
+            entry.innerHTML = message;
+            entry.className = isError ? 'error' : 'success';
+            logElement.appendChild(entry);
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        async function addProduct(product) {
+            return fetch(BASE_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(product)
+            });
+        }
+
+        async function addAllProducts() {
+            if (isRunning) return;
+            isRunning = true;
+            
+            startBtn.disabled = true;
+            startBtn.textContent = "⏳ Agregando..."
+            logElement.innerHTML = '';
+            successCount = 0;
+            errorCount = 0;
+
+            log("🚀 Iniciando agregado de productos a Firebase...");
+            log("URL: " + BASE_URL);
+
+            for (let i = 0; i < NEW_PRODUCTS.length; i++) {
+                const product = NEW_PRODUCTS[i];
+                try {
+                    const response = await addProduct(product);
+                    if (response.ok) {
+                        const result = await response.json();
+                        log(`✅ ${i + 1}. "${product.name}" agregado (ID: ${result.name || 'N/A'})`);
+                        successCount++;
+                    } else {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                } catch (error) {
+                    log(`❌ ${i + 1}. "${product.name}" falló: ${error.message}`, true);
+                    errorCount++;
+                }
+
+                // Update progress
+                const progress = ((i + 1) / NEW_PRODUCTS.length) * 100;
+                progressFill.style.width = progress + '%';
+                progressText.textContent = `${i + 1}/${NEW_PRODUCTS.length} productos`;
+
+                // Small delay to avoid rate limiting
+                if (i < NEW_PRODUCTS.length - 1) {
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                }
+            }
+
+            // Show summary
+            summaryElement.style.display = 'block';
+            summaryElement.innerHTML = `
+                <h3>📊 Resumen</h3>
+                <p><strong>✅ Éxitos:</strong> ${successCount}</p>
+                <p><strong>❌ Errores:</strong> ${errorCount}</p>
+                <p><strong>📝 Total:</strong> ${NEW_PRODUCTS.length}</p>
+            `;
+
+            if (errorCount === 0) {
+                summaryElement.innerHTML += '<p style="color: #2E8B57; font-weight: bold; margin-top: 10px;">✨ Todos los productos fueron agregados correctamente!</p>';
+            } else {
+                summaryElement.innerHTML += '<p style="color: #B22222; font-weight: bold; margin-top: 10px;">⚠️ Algunos productos fallaron. Revisa el log para detalles.</p>';
+            }
+
+            isRunning = false;
+            startBtn.disabled = false;
+            startBtn.textContent = "✅ Productos Agregados";
+        }
+
+        startBtn.addEventListener('click', addAllProducts);
+    </script>
+</body>
+</html>
