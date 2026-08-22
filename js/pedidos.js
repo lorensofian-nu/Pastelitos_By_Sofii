@@ -11,6 +11,12 @@ App.Pedidos = (function () {
   "use strict";
 
   const IVA = 0.19;
+  
+  // Estados posibles para un pedido
+  const ESTADOS = {
+    EN_PROCESO: "en proceso",
+    ENTREGADO: "entregado"
+  };
 
   /**
    * Valida los datos crudos de un pedido antes de calcularlo.
@@ -45,6 +51,7 @@ App.Pedidos = (function () {
     validar: validar,
     calcular: calcular,
     IVA: IVA,
+    ESTADOS: ESTADOS,
   };
 })();
 

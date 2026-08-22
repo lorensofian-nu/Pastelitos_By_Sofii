@@ -63,6 +63,16 @@
           <div class="stat-number" id="statPromedio">$0</div>
           <div class="stat-label">Promedio por pedido</div>
         </div>
+        <div class="stat-box stat-box--en-proceso">
+          <div class="stat-icon">🔄</div>
+          <div class="stat-number" id="statEnProceso">0</div>
+          <div class="stat-label">En proceso</div>
+        </div>
+        <div class="stat-box stat-box--entregado">
+          <div class="stat-icon">✅</div>
+          <div class="stat-number" id="statEntregado">0</div>
+          <div class="stat-label">Entregados</div>
+        </div>
       </div>
 
       <!-- Gráficos -->
@@ -83,6 +93,12 @@
           <h3>Pedidos: Tienda vs Domicilio</h3>
           <div class="chart-container">
             <canvas id="chartEntrega"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <h3>Pedidos: Estado actual</h3>
+          <div class="chart-container">
+            <canvas id="chartEstado"></canvas>
           </div>
         </div>
       </div>
@@ -141,6 +157,16 @@
         </form>
         <div id="editMsg"></div>
       </div>
+    </div>
+
+    <!-- Lista de pedidos -->
+    <div class="card">
+      <h2>Pedidos</h2>
+      <div id="pedidosMsg"></div>
+      <div id="pedidosList" class="pedidos-list">
+        <p class="loading-state">Cargando pedidos…</p>
+      </div>
+      <div id="pedidosPagination" class="pagination"></div>
     </div>
   </main>
 

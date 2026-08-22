@@ -163,6 +163,7 @@ function confirmarPedido() {
     iva: ultimoCalculo.iva,
     total: ultimoCalculo.total,
     entrega: getDatosEntrega(),
+    estado: "en proceso",
     date: new Date().toISOString(),
   };
 

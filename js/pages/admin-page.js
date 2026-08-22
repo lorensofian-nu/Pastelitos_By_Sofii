@@ -27,6 +27,7 @@ window.addEventListener("DOMContentLoaded", function () {
   function waitForChartjs() {
     if (typeof Chart !== "undefined") {
       cargarDashboard();
+      cargarPedidos();
     } else {
       // Si Chart.js no está cargado, esperar y volver a intentar
       setTimeout(waitForChartjs, 100);
@@ -42,10 +43,16 @@ var currentPageProductos = 1;
 var productosPerPage = 6;
 var menuCache = {};
 
+/* ========== Variables de pedidos ========== */
+var currentPagePedidos = 1;
+var pedidosPerPage = 10;
+var pedidosCache = {};
+
 /* ========== Gráficos Chart.js ========== */
 var chartBarrasInstance = null;
 var chartDonaInstance = null;
 var chartEntregaInstance = null;
+var chartEstadoInstance = null;
 
 var chartColors = [
   "#D4A5E8", "#F7C6D0", "#A8D8B9", "#F9D89C", "#B5D4F1",
@@ -67,6 +74,8 @@ function cargarDashboard() {
       var ventasPorProducto = {};
       var tiendaCount = 0;
       var domicilioCount = 0;
+      var enProcesoCount = 0;
+      var entregadoCount = 0;
 
       Object.keys(pedidos).forEach(function (id) {
         var p = pedidos[id];
@@ -80,6 +89,14 @@ function cargarDashboard() {
           domicilioCount++;
         } else {
           tiendaCount++;
+        }
+
+        // Contar estado
+        var estado = (p.estado) ? p.estado.toLowerCase() : "en proceso";
+        if (estado === "entregado") {
+          entregadoCount++;
+        } else {
+          enProcesoCount++;
         }
 
         var key = p.productId || p.productName;
@@ -98,6 +115,8 @@ function cargarDashboard() {
       document.getElementById("statPromedio").textContent = "$" + Number(promedio).toFixed(0);
       document.getElementById("statTienda").textContent = tiendaCount;
       document.getElementById("statDomicilio").textContent = domicilioCount;
+      document.getElementById("statEnProceso").textContent = enProcesoCount;
+      document.getElementById("statEntregado").textContent = entregadoCount;
 
       var sorted = Object.values(ventasPorProducto).sort(function (a, b) {
         return b.quantity - a.quantity;
@@ -106,6 +125,7 @@ function cargarDashboard() {
       renderCharts(sorted, totalProductos);
       renderTopList(sorted);
       renderEntregaChart(tiendaCount, domicilioCount);
+      renderEstadoChart(enProcesoCount, entregadoCount);
     })
     .catch(function (err) {
       console.error("Error cargando dashboard:", err);
@@ -349,6 +369,69 @@ function renderEntregaChart(tiendaCount, domicilioCount) {
   });
 }
 
+function renderEstadoChart(enProcesoCount, entregadoCount) {
+  if (typeof Chart === "undefined") return;
+  
+  var chartEstadoCanvas = document.getElementById("chartEstado");
+  if (!chartEstadoCanvas) {
+    console.warn("Contenedor chartEstado no encontrado");
+    return;
+  }
+
+  if (chartEstadoInstance) chartEstadoInstance.destroy();
+
+  var ctx = chartEstadoCanvas.getContext("2d");
+  chartEstadoInstance = new Chart(ctx, {
+    type: "doughnut",
+    data: {
+      labels: ["En proceso", "Entregado"],
+      datasets: [{
+        data: [enProcesoCount, entregadoCount],
+        backgroundColor: ["#F7C6D0", "#A8D8B9"],
+        borderColor: "#FFFFFF",
+        borderWidth: 3,
+        hoverOffset: 8,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: "55%",
+      plugins: {
+        legend: {
+          position: "bottom",
+          labels: {
+            font: { family: "Quicksand", size: 12, weight: 600 },
+            color: "#3A2E4D",
+            padding: 14,
+            usePointStyle: true,
+            pointStyleWidth: 12,
+          }
+        },
+        tooltip: {
+          backgroundColor: "#3A2E4D",
+          titleFont: { family: "Fredoka", size: 14 },
+          bodyFont: { family: "Quicksand", size: 13 },
+          cornerRadius: 12,
+          padding: 12,
+          callbacks: {
+            label: function (ctx) {
+              var total = ctx.dataset.data.reduce(function (a, b) { return a + b; }, 0);
+              var pct = total > 0 ? ((ctx.raw / total) * 100).toFixed(1) : 0;
+              return " " + ctx.label + ": " + ctx.raw + " (" + pct + "%)";
+            }
+          }
+        }
+      },
+      animation: {
+        animateRotate: true,
+        duration: 1200,
+        easing: "easeOutQuart"
+      }
+    }
+  });
+}
+
 /* ========== CRUD: Crear ========== */
 
 function crearProducto() {
@@ -568,6 +651,153 @@ function eliminarProducto(id, name) {
       console.error(err);
       msg.innerHTML = '<div class="msg msg-error">No se pudo eliminar el producto.</div>';
     });
+}
+
+/* ========== Pedidos ========== */
+
+function cargarPedidos() {
+  var container = document.getElementById("pedidosList");
+  container.innerHTML = '<p class="loading-state">Cargando pedidos…</p>';
+
+  App.Api.getPedidos()
+    .then(function (pedidos) {
+      pedidosCache = pedidos;
+      renderPedidosPage();
+    })
+    .catch(function (err) {
+      console.error(err);
+      container.innerHTML = '<div class="msg msg-error">No se pudieron cargar los pedidos.</div>';
+    });
+}
+
+function renderPedidosPage() {
+  var container = document.getElementById("pedidosList");
+  var paginationDiv = document.getElementById("pedidosPagination");
+  var ids = Object.keys(pedidosCache);
+
+  if (ids.length === 0) {
+    container.innerHTML = '<p class="empty-state">Aún no hay pedidos registrados.</p>';
+    paginationDiv.innerHTML = "";
+    return;
+  }
+
+  var totalPages = Math.ceil(ids.length / pedidosPerPage);
+  if (currentPagePedidos > totalPages) currentPagePedidos = totalPages;
+  if (currentPagePedidos < 1) currentPagePedidos = 1;
+
+  var start = (currentPagePedidos - 1) * pedidosPerPage;
+  var end = start + pedidosPerPage;
+  var idsToShow = ids.slice(start, end);
+
+  var html = '<table class="pedidos-table">' +
+    '<thead><tr><th>#</th><th>Producto</th><th>Cantidad</th><th>Total</th><th>Entrega</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>';
+
+  idsToShow.forEach(function (id, idx) {
+    var p = pedidosCache[id];
+    var num = start + idx + 1;
+    var estado = p.estado || "en proceso";
+    var badgeClass = estado === "entregado" ? "badge--entregado" : "badge--en-proceso";
+    var tipoEntrega = (p.entrega && p.entrega.tipo) ? p.entrega.tipo : "tienda";
+    var textoEntrega = tipoEntrega === "domicilio" ? "Domicilio" : "Tienda";
+
+    html +=
+      '<tr data-id="' + id + '">' +
+      '<td class="row-num">' + num + '</td>' +
+      '<td>' + escapeHtml(p.productName || "Desconocido") + '</td>' +
+      '<td>' + (p.quantity || 0) + '</td>' +
+      '<td class="row-total">$' + Number(p.total || 0).toFixed(0) + '</td>' +
+      '<td>' + textoEntrega + '</td>' +
+      '<td><span class="badge ' + badgeClass + '">' + estado + '</span></td>' +
+      '<td class="acciones">' +
+        '<button class="btn btn-sm btn-primary" data-action="toggle-estado" data-id="' + id + '" data-estado="' + estado + '">Cambiar estado</button>' +
+      '</td>' +
+      '</tr>';
+  });
+
+  html += '</tbody></table>';
+  container.innerHTML = html;
+
+  // Event delegation para cambiar estado
+  container.querySelector("tbody").addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-action='toggle-estado']");
+    if (!btn) return;
+    var id = btn.getAttribute("data-id");
+    var estadoActual = btn.getAttribute("data-estado");
+    toggleEstadoPedido(id, estadoActual, btn);
+  });
+
+  // Paginación
+  renderPaginationPedidos(totalPages);
+}
+
+function toggleEstadoPedido(id, estadoActual, btn) {
+  var nuevoEstado = estadoActual === "en proceso" ? "entregado" : "en proceso";
+  
+  // Mostrar mensaje de carga
+  var msg = document.getElementById("pedidosMsg");
+  msg.innerHTML = '<div class="msg msg-info">Actualizando estado…</div>';
+
+  // Actualizar en Firebase
+  App.Api.patchPedido(id, { estado: nuevoEstado })
+    .then(function () {
+      // Actualizar cache local
+      pedidosCache[id].estado = nuevoEstado;
+      msg.innerHTML = '<div class="msg msg-success">Estado actualizado.</div>';
+      
+      // Recargar la lista para reflejar el cambio
+      setTimeout(function () {
+        msg.innerHTML = "";
+        renderPedidosPage();
+      }, 800);
+    })
+    .catch(function (err) {
+      console.error(err);
+      msg.innerHTML = '<div class="msg msg-error">No se pudo actualizar el estado.</div>';
+    });
+}
+
+function renderPaginationPedidos(totalPages) {
+  var paginationDiv = document.getElementById("pedidosPagination");
+  paginationDiv.innerHTML = "";
+
+  if (totalPages <= 1) return;
+
+  // Botón anterior
+  if (currentPagePedidos > 1) {
+    var prevBtn = document.createElement("button");
+    prevBtn.className = "page-btn";
+    prevBtn.textContent = "\u25C0";
+    prevBtn.addEventListener("click", function () {
+      currentPagePedidos--;
+      renderPedidosPage();
+    });
+    paginationDiv.appendChild(prevBtn);
+  }
+
+  for (var i = 1; i <= totalPages; i++) {
+    (function (page) {
+      var btn = document.createElement("button");
+      btn.className = "page-btn" + (page === currentPagePedidos ? " active" : "");
+      btn.textContent = page;
+      btn.addEventListener("click", function () {
+        currentPagePedidos = page;
+        renderPedidosPage();
+      });
+      paginationDiv.appendChild(btn);
+    })(i);
+  }
+
+  // Botón siguiente
+  if (currentPagePedidos < totalPages) {
+    var nextBtn = document.createElement("button");
+    nextBtn.className = "page-btn";
+    nextBtn.textContent = "\u25B6";
+    nextBtn.addEventListener("click", function () {
+      currentPagePedidos++;
+      renderPedidosPage();
+    });
+    paginationDiv.appendChild(nextBtn);
+  }
 }
 
 /* ========== Utilidad ========== */
